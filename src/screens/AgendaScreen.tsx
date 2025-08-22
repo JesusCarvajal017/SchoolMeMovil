@@ -12,5 +12,5 @@ export default AgendaScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1E1E50' },
-  text: { color: '#fff', fontSize: 18 },
+  text: { color: '#ffffff', fontSize: 18 },
 });
