@@ -66,7 +66,7 @@ const LoginScreen = () => {
           />
 
           <TouchableOpacity style={styles.forgotContainer}>
-            <Text style={styles.forgotText}>¿olvidó su contraseña?</Text>
+            <Text style={styles.forgotText}>¿olvidó su contraseña?       </Text>
           </TouchableOpacity>
 
           <CustomButton title="Ingresar" onPress={handleLogin} />

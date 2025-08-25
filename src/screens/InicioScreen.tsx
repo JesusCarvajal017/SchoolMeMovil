@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   curves: {
     position: 'absolute',
-    top: -15,
+    top: -16,
     left: 0,
     width: width * 0.5,
     height: width * 0.5,

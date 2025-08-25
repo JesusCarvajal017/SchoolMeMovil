@@ -4,12 +4,12 @@ import { View, StyleSheet } from 'react-native';
 import Header from '../components/Header';
 import Carousel from '../components/Carousel';
 import MessageBox from '../components/MessageBox';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar/Navbar';
 import SideMenu from '../modals/SideMenu';
 import HelpModal from '../modals/HelpModal';
 
 const MainMenuScreen = () => {
-  const [activeTab, setActiveTab] = useState('Inicio');
+  const [activeTab, setActiveTab] = useState<number>(0);
   const [showMenu, setShowMenu] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
@@ -33,7 +33,7 @@ export default MainMenuScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E50',
+    backgroundColor: '#17144B',
     paddingTop: 40,
   },
 });
