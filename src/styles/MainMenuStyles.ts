@@ -2,10 +2,11 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1E1E50',
+    paddingTop: 40,
   },
   headerContainer: {
     backgroundColor: '#fff',
@@ -27,8 +28,35 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1E1E50',
   },
-  menuContainer: {
+  welcomeCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
     padding: 20,
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  welcomeTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1E1E50',
+    textAlign: 'center',
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  userInfo: {
+    fontSize: 14,
+    color: '#1E1E50',
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#fff',
@@ -48,6 +76,33 @@ export const styles = StyleSheet.create({
     color: '#1E1E50',
     fontWeight: '500',
     marginLeft: 16,
+  },
+  navbarContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navbar: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  tabIcon: {
+    marginHorizontal: 16,
+    tintColor: '#1E1E50',
+  },
+  activeTab: {
+    tintColor: '#4A90E2',
   },
   modalOverlay: {
     flex: 1,
@@ -104,3 +159,5 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+export default styles;
