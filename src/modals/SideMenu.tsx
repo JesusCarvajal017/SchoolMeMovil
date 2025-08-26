@@ -1,3 +1,4 @@
+// modals/SideMenu.tsx
 import React, { useEffect, useRef } from 'react';
 import {
   Modal,
@@ -10,15 +11,18 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 const { width } = Dimensions.get('window');
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
 };
 
-const SideMenu = ({ visible, onClose }: Props) => {
+const SideMenu = ({ visible, onClose, navigation }: Props) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
   useEffect(() => {
@@ -28,6 +32,11 @@ const SideMenu = ({ visible, onClose }: Props) => {
       useNativeDriver: true,
     }).start();
   }, [visible]);
+
+  const handleNavigate = (screen: keyof RootStackParamList) => {
+    navigation.navigate(screen);
+    onClose();
+  };
 
   return (
     <Modal transparent visible={visible} animationType="none">
@@ -47,14 +56,14 @@ const SideMenu = ({ visible, onClose }: Props) => {
 
           {/* Opciones */}
           <View style={styles.optionsContainer}>
-            <MenuOption icon="home-outline" label="Inicio" />
-            <MenuOption icon="calendar-outline" label="Mi Agenda" />
-            <MenuOption icon="bar-chart-outline" label="Reportes" />
-            <MenuOption icon="people-outline" label="Padres" />
+            <MenuOption icon="home-outline" label="Inicio" onPress={() => handleNavigate('Main')} />
+            <MenuOption icon="calendar-outline" label="Mi Agenda" onPress={() => handleNavigate('Agenda')} />
+            <MenuOption icon="bar-chart-outline" label="Reportes" onPress={() => handleNavigate('Reportes')} />
+            <MenuOption icon="people-outline" label="Padres" onPress={() => handleNavigate('Padres')} />
           </View>
 
           {/* Cerrar sesión */}
-          <TouchableOpacity style={styles.logout}>
+          <TouchableOpacity style={styles.logout} onPress={() => handleNavigate('Login')}>
             <Ionicons name="log-out-outline" size={20} color="#1E1E50" />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>
@@ -64,8 +73,16 @@ const SideMenu = ({ visible, onClose }: Props) => {
   );
 };
 
-const MenuOption = ({ icon, label }: { icon: string; label: string }) => (
-  <TouchableOpacity style={styles.option}>
+const MenuOption = ({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity style={styles.option} onPress={onPress}>
     <Ionicons name={icon as any} size={20} color="#1E1E50" style={styles.optionIcon} />
     <Text style={styles.optionText}>{label}</Text>
   </TouchableOpacity>
