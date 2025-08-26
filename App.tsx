@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import InicioScreen from './src/screens/InicioScreen';
-import LoginScreen from './src/screens/LoginScreen';
-import MainMenuScreen from './src/screens/MainMenuScreen';
+import InicioScreen from './src/screens/ModelSecurity/InicioScreen';
+import LoginScreen from './src/screens/ModelSecurity/LoginScreen';
+import MainMenuScreen from './src/screens/ModelSecurity/MainMenuScreen';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 

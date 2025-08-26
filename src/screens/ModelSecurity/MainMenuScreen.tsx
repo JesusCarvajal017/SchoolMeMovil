@@ -1,12 +1,12 @@
 // screens/MainMenuScreen.tsx
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import Header from '../components/Header';
-import Carousel from '../components/Carousel';
-import MessageBox from '../components/MessageBox';
-import Navbar from '../components/Navbar/Navbar';
-import SideMenu from '../modals/SideMenu';
-import HelpModal from '../modals/HelpModal';
+import Header from '../../components/Menu/Header';
+import Carousel from '../../components/Menu/Carousel';
+import MessageBox from '../../components/Menu/MessageBox';
+import SideMenu from '../../modals/SideMenu';
+import HelpModal from '../../modals/HelpModal';
+import Navbar from '../../components/Narvar/Navbar';
 
 const MainMenuScreen = () => {
   const [activeTab, setActiveTab] = useState<number>(0);

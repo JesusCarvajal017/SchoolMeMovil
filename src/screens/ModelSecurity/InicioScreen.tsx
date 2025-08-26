@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 
 const { width } = Dimensions.get('window');
 
@@ -13,13 +13,13 @@ const InicioScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Curvas decorativas */}
-      <Image source={require('../assets/curvas.png')} style={styles.curves} />
+      <Image source={require('../../assets/curvas.png')} style={styles.curves} />
 
       {/* Logo en esquina superior derecha */}
-      <Image source={require('../assets/logo_colegio.png')} style={styles.logo} />
+      <Image source={require('../../assets/logo_colegio.png')} style={styles.logo} />
 
       {/* Ilustración central */}
-      <Image source={require('../assets/ilustracion_inicio.png')} style={styles.illustration} />
+      <Image source={require('../../assets/ilustracion_inicio.png')} style={styles.illustration} />
 
       {/* Texto de bienvenida */}
       <Text style={styles.title}>Bienvenidos a DR PHILIPS Mobil</Text>

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   activeButton: {
     backgroundColor: '#1E1E50',

@@ -12,10 +12,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 
-import CustomInput from '../components/CustomInput';
-import CustomButton from '../components/CustomButton';
+import CustomInput from '../../components/Genericos/CustomInput';
+import CustomButton from '../../components/Genericos/CustomButton';
 
 const { width } = Dimensions.get('window');
 
@@ -46,8 +46,8 @@ const LoginScreen = () => {
         style={styles.centeredContent}
       >
         <View style={styles.formContainer}>
-          <Image source={require('../assets/curvas.png')} style={styles.curves} />
-          <Image source={require('../assets/ilustracion_login.png')} style={styles.illustration} />
+          <Image source={require('../../assets/curvas.png')} style={styles.curves} />
+          <Image source={require('../../assets/ilustracion_login.png')} style={styles.illustration} />
 
           <CustomInput
             label="Correo Electrónico"

@@ -1,4 +1,3 @@
-// modals/SideMenu.tsx
 import React, { useEffect, useRef } from 'react';
 import {
   Modal,
@@ -8,7 +7,9 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -21,37 +22,41 @@ const SideMenu = ({ visible, onClose }: Props) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
   useEffect(() => {
-    if (visible) {
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(slideAnim, {
-        toValue: -width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
+    Animated.timing(slideAnim, {
+      toValue: visible ? 0 : -width,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }, [visible]);
 
   return (
     <Modal transparent visible={visible} animationType="none">
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
         <Animated.View style={[styles.menu, { transform: [{ translateX: slideAnim }] }]}>
-          <Text style={styles.title}>Menú Principal</Text>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Inicio</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Agenda</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Reportes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <Text style={styles.optionText}>Padres</Text>
+          {/* Perfil */}
+          <View style={styles.profileContainer}>
+            <Image
+              source={{
+                uri: 'https://fotografias.lasexta.com/clipping/cmsimages02/2019/11/14/66C024AF-E20B-49A5-8BC3-A21DD22B96E6/default.jpg?crop=1299,731,x0,y0&width=1900&height=1069&optimize=low',
+              }}
+              style={styles.profileImage}
+            />
+            <Text style={styles.profileName}>Santiago Chaparro</Text>
+            <Text style={styles.profileRole}>Padre de Familia</Text>
+          </View>
+
+          {/* Opciones */}
+          <View style={styles.optionsContainer}>
+            <MenuOption icon="home-outline" label="Inicio" />
+            <MenuOption icon="calendar-outline" label="Mi Agenda" />
+            <MenuOption icon="bar-chart-outline" label="Reportes" />
+            <MenuOption icon="people-outline" label="Padres" />
+          </View>
+
+          {/* Cerrar sesión */}
+          <TouchableOpacity style={styles.logout}>
+            <Ionicons name="log-out-outline" size={20} color="#1E1E50" />
+            <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>
         </Animated.View>
       </TouchableOpacity>
@@ -59,35 +64,77 @@ const SideMenu = ({ visible, onClose }: Props) => {
   );
 };
 
+const MenuOption = ({ icon, label }: { icon: string; label: string }) => (
+  <TouchableOpacity style={styles.option}>
+    <Ionicons name={icon as any} size={20} color="#1E1E50" style={styles.optionIcon} />
+    <Text style={styles.optionText}>{label}</Text>
+  </TouchableOpacity>
+);
+
 export default SideMenu;
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'flex-start',
   },
   menu: {
-    width: width * 0.7,
+    width: width * 0.75,
     height: '100%',
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: '#F9FAFC',
+    paddingHorizontal: 24,
     paddingTop: 60,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 5,
+    borderTopRightRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 8,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  profileContainer: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  profileImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    marginBottom: 12,
+    backgroundColor: '#ccc',
+  },
+  profileName: {
+    fontSize: 18,
+    fontWeight: '600',
     color: '#1E1E50',
-    marginBottom: 20,
+  },
+  profileRole: {
+    fontSize: 14,
+    color: '#6B6B8A',
+    marginTop: 4,
+  },
+  optionsContainer: {
+    gap: 16,
   },
   option: {
-    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  optionIcon: {
+    marginRight: 12,
   },
   optionText: {
     fontSize: 16,
     color: '#1E1E50',
+    fontWeight: '500',
+  },
+  logout: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 'auto',
+    paddingVertical: 20,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#1E1E50',
+    marginLeft: 12,
+    fontWeight: '500',
   },
 });

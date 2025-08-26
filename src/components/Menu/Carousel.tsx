@@ -11,9 +11,9 @@ import {
 const { width } = Dimensions.get('window');
 
 const images = [
-  require('../assets/images/colegio3.jpg'),
-  require('../assets/images/colegio1.jpg'),
-  require('../assets/images/colegio2.png'),
+  require('../../assets/images/colegio3.jpg'),
+  require('../../assets/images/colegio1.jpg'),
+  require('../../assets/images/colegio2.png'),
 ];
 
 const Carousel = () => {
