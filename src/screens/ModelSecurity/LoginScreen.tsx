@@ -26,6 +26,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = () => {
     const emailValid = email.trim() !== '';
@@ -34,9 +35,21 @@ const LoginScreen = () => {
     setEmailError(!emailValid);
     setPasswordError(!passwordValid);
 
-    if (emailValid && passwordValid) {
-      navigation.navigate('Main');
+    if (!emailValid || !passwordValid) {
+      setErrorMessage('Por favor completa todos los campos para continuar.');
+      return;
     }
+
+    // Simulación de fallo de autenticación
+    const loginSuccess = false;
+
+    if (!loginSuccess) {
+      setErrorMessage('Correo o contraseña incorrectos. Intenta nuevamente.');
+      return;
+    }
+
+    setErrorMessage('');
+    navigation.navigate('Main');
   };
 
   return (
@@ -64,6 +77,10 @@ const LoginScreen = () => {
             placeholder="••••••••"
             hasError={passwordError}
           />
+
+          {errorMessage !== '' && (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          )}
 
           <TouchableOpacity style={styles.forgotContainer}>
             <Text style={styles.forgotText}>¿olvidó su contraseña?       </Text>
@@ -127,5 +144,11 @@ const styles = StyleSheet.create({
     color: '#1E1E50',
     fontSize: 13,
     fontWeight: '500',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 10,
   },
 });

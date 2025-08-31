@@ -5,5 +5,4 @@ export interface Form {
   order: number,
   id: number,
   status: number
-  
 }
