@@ -16,6 +16,8 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 
 import CustomInput from '../../components/Genericos/CustomInput';
 import CustomButton from '../../components/Genericos/CustomButton';
+import { loginUser } from '../../api/services/UserService';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +30,12 @@ const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = () => {
+
+  // evita múltiples envíos
+  const [loading, setLoading] = useState(false); 
+
+  const handleLogin = async () => {
+    if (loading) return;
     const emailValid = email.trim() !== '';
     const passwordValid = password.trim() !== '';
 
@@ -40,16 +47,20 @@ const LoginScreen = () => {
       return;
     }
 
-    // Simulación de fallo de autenticación
-    const loginSuccess = false;
+    try {
+      setLoading(true);
+      setErrorMessage('');
 
-    if (!loginSuccess) {
-      setErrorMessage('Correo o contraseña incorrectos. Intenta nuevamente.');
-      return;
+      const data = await loginUser(email, password);
+      console.log('Token recibido:', data.token);
+
+      // await AsyncStorage.setItem('token', data.token);
+      navigation.navigate('Main');
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Correo o contraseña incorrectos.');
+    } finally {
+      setLoading(false);
     }
-
-    setErrorMessage('');
-    navigation.navigate('Main');
   };
 
   return (
@@ -83,10 +94,10 @@ const LoginScreen = () => {
           )}
 
           <TouchableOpacity style={styles.forgotContainer}>
-            <Text style={styles.forgotText}>¿olvidó su contraseña?       </Text>
+            <Text style={styles.forgotText}>¿Olvidó su contraseña?</Text>
           </TouchableOpacity>
 
-          <CustomButton title="Ingresar" onPress={handleLogin} />
+          <CustomButton title={loading ? 'Ingresando...' : 'Ingresar'} onPress={handleLogin} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

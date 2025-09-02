@@ -1,24 +1,38 @@
-import { USER_REGISTERED_END_POINT } from '../constant/Endpoits';
-import { User } from '../types/User';
+import { LOGIN_END_POINT } from '../constant/Endpoits';
 
-export const getRegisteredUsers = async (): Promise<User[]> => {
+export interface LoginSuccess {
+  token: string;
+  // otros campos si tu API los devuelve
+}
+
+export const loginUser = async (email: string, password: string): Promise<LoginSuccess> => {
   try {
-    const response = await fetch(USER_REGISTERED_END_POINT, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Authorization': 'Bearer TU_TOKEN' // si lo requieres
-      },
+    const response = await fetch(LOGIN_END_POINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+    // declaro una variable  que lee una sola vez y parsea de forma segura
+    const raw = await response.text();
+    let data: any = {};
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch {
+      data = { message: raw };
     }
 
-    const users: User[] = await response.json();
-    return users;
-  } catch (error) {
-    console.error('Error obteniendo usuarios registrados:', error);
-    throw error;
+    // Reglas de éxito: status OK + token presente
+    if (!response.ok) {
+      throw new Error(data?.message || data?.error || `Error HTTP: ${response.status}`);
+    }
+    if (!data?.token) {
+      throw new Error(data?.message || 'Acceso denegado: token no recibido');
+    }
+
+    return data as LoginSuccess;
+  } catch (error: any) {
+    console.error('Error en loginUser:', error);
+    throw new Error(error?.message || 'Error de autenticación');
   }
 };
