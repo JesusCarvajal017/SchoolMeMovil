@@ -9,6 +9,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -38,9 +39,42 @@ const SideMenu = ({ visible, onClose, navigation }: Props) => {
     onClose();
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      "Cerrar Sesión",
+      "¿Estás seguro que deseas cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sí, salir",
+          style: "destructive",
+          onPress: () => {
+            onClose();
+            navigation.navigate("Login");
+          },
+        },
+      ]
+    );
+  };
+
+  const handleExit = () => {
+    Alert.alert(
+      "Salir del menú",
+      "¿Quieres cerrar el menú o cerrar sesión?",
+      [
+        { text: "Cerrar Menú", style: "cancel", onPress: onClose },
+        { text: "Cerrar Sesión", style: "destructive", onPress: handleLogout },
+      ]
+    );
+  };
+
   return (
     <Modal transparent visible={visible} animationType="none">
-      <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
+      <TouchableOpacity
+        style={styles.overlay}
+        activeOpacity={1}
+        onPress={handleExit} // 🔹 al tocar afuera, pregunta qué hacer
+      >
         <Animated.View style={[styles.menu, { transform: [{ translateX: slideAnim }] }]}>
           {/* Perfil */}
           <View style={styles.profileContainer}>
@@ -63,7 +97,7 @@ const SideMenu = ({ visible, onClose, navigation }: Props) => {
           </View>
 
           {/* Cerrar sesión */}
-          <TouchableOpacity style={styles.logout} onPress={() => handleNavigate('Login')}>
+          <TouchableOpacity style={styles.logout} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="#1E1E50" />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>

@@ -1,12 +1,13 @@
-// navigation/AppNavigator.tsx
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import InicioScreen from '../screens/ModelSecurity/InicioScreen';
 import LoginScreen from '../screens/ModelSecurity/LoginScreen';
 import MainMenuScreen from '../screens/ModelSecurity/MainMenuScreen';
-import AgendaScreen from '../screens/AgendaScreen';
+import AgendaScreen from '../screens/AgendaScreen'; 
 import ReportesScreen from '../screens/ReportesScreen';
 import PadresScreen from '../screens/PadresScreen';
+
+
 
 export type RootStackParamList = {
   Inicio: undefined;

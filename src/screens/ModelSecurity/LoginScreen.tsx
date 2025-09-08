@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,25 +17,26 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import CustomInput from '../../components/Genericos/CustomInput';
 import CustomButton from '../../components/Genericos/CustomButton';
 import { loginUser } from '../../api/services/UserService';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { manejarToken } from '../../util/TokenManager';
+import { AuthContext } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { logout } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-
-  // evita múltiples envíos
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (loading) return;
+
     const emailValid = email.trim() !== '';
     const passwordValid = password.trim() !== '';
 
@@ -54,7 +55,9 @@ const LoginScreen = () => {
       const data = await loginUser(email, password);
       console.log('Token recibido:', data.token);
 
-      // await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('token', data.token);
+      manejarToken(data.token, logout);
+
       navigation.navigate('Main');
     } catch (err: any) {
       setErrorMessage(err.message || 'Correo o contraseña incorrectos.');
