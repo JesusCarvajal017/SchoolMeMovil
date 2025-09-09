@@ -17,15 +17,13 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import CustomInput from '../../components/Genericos/CustomInput';
 import CustomButton from '../../components/Genericos/CustomButton';
 import { loginUser } from '../../api/services/UserService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { manejarToken } from '../../util/TokenManager';
 import { AuthContext } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { logout } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -53,14 +51,21 @@ const LoginScreen = () => {
       setErrorMessage('');
 
       const data = await loginUser(email, password);
-      console.log('Token recibido:', data.token);
 
-      await AsyncStorage.setItem('token', data.token);
-      manejarToken(data.token, logout);
+      // Validación estricta: si no hay token válido, mensaje claro y no guardamos nada
+      if (!data || !data.token) {
+        setErrorMessage('Las credenciales no existen o no coinciden.');
+        return;
+      }
 
-      navigation.navigate('Main');
+      await login(data.token);
+      navigation.replace('Main');
     } catch (err: any) {
-      setErrorMessage(err.message || 'Correo o contraseña incorrectos.');
+      if (err?.response?.status === 401 || err?.response?.status === 404) {
+        setErrorMessage('Las credenciales no existen o no coinciden.');
+      } else {
+        setErrorMessage(err.message || 'Ocurrió un error al iniciar sesión.');
+      }
     } finally {
       setLoading(false);
     }

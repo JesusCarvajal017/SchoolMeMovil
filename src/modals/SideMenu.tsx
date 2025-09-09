@@ -1,5 +1,4 @@
-// modals/SideMenu.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import {
   Modal,
   View,
@@ -14,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { AuthContext } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +25,7 @@ type Props = {
 
 const SideMenu = ({ visible, onClose, navigation }: Props) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
+  const { logout } = useContext(AuthContext);
 
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -48,9 +49,13 @@ const SideMenu = ({ visible, onClose, navigation }: Props) => {
         {
           text: "Sí, salir",
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
+            await logout();
             onClose();
-            navigation.navigate("Login");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Inicio' }],
+            });
           },
         },
       ]
@@ -73,7 +78,7 @@ const SideMenu = ({ visible, onClose, navigation }: Props) => {
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
-        onPress={handleExit} // 🔹 al tocar afuera, pregunta qué hacer
+        onPress={handleExit}
       >
         <Animated.View style={[styles.menu, { transform: [{ translateX: slideAnim }] }]}>
           {/* Perfil */}

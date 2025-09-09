@@ -1,46 +1,39 @@
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
-
-type JWTPayload = {
-  exp: number; // Unix time en segundos
+type Decoded = {
+  exp?: number;
   [key: string]: any;
 };
 
-let logoutTimer: NodeJS.Timeout | null = null;
-
-/**
- * Programa el cierre de sesión cuando el token expire
- */
-export function manejarToken(token: string, onLogout: () => void) {
+export const tokenValido = (token: string): boolean => {
   try {
-    const decoded = jwtDecode<JWTPayload>(token);
-    const exp = decoded.exp;
-    const segundosRestantes = exp - Math.floor(Date.now() / 1000);
-
-    if (segundosRestantes <= 0) {
-      onLogout();
-      return;
-    }
-
-    if (logoutTimer) clearTimeout(logoutTimer);
-
-    logoutTimer = setTimeout(() => {
-      onLogout();
-    }, segundosRestantes * 1000);
-  } catch (error) {
-    console.error('Error al manejar token:', error);
-    onLogout();
-  }
-}
-
-/**
- * Valida si el token sigue vigente
- */
-export function tokenValido(token: string): boolean {
-  try {
-    const { exp } = jwtDecode<JWTPayload>(token);
-    return exp > Math.floor(Date.now() / 1000);
+    const decoded: Decoded = jwtDecode(token);
+    if (!decoded.exp) return false;
+    const now = Date.now() / 1000;
+    return decoded.exp > now;
   } catch {
     return false;
   }
-}
+};
+
+// Programa el cierre de sesión cuando el token expire
+export const manejarToken = (token: string, logout: () => Promise<void>) => {
+  try {
+    const decoded: Decoded = jwtDecode(token);
+    if (!decoded.exp) {
+      logout();
+      return;
+    }
+    const msRestantes = decoded.exp * 1000 - Date.now();
+    if (msRestantes <= 0) {
+      logout();
+      return;
+    }
+    // Importante: en un contexto real, guarda este timeout para poder limpiarlo en logout si lo deseas.
+    setTimeout(() => {
+      logout();
+    }, msRestantes);
+  } catch {
+    logout();
+  }
+};

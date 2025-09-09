@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { tokenValido, manejarToken } from "../util/TokenManager";
 
 type AuthContextType = {
   token: string | null;
@@ -25,11 +25,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         manejarToken(savedToken, logout);
       } else {
         await AsyncStorage.removeItem("token");
+        setToken(null);
       }
     })();
   }, []);
 
   const login = async (newToken: string) => {
+    if (!newToken) return;
     await AsyncStorage.setItem("token", newToken);
     setToken(newToken);
     manejarToken(newToken, logout);
@@ -38,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     await AsyncStorage.removeItem("token");
     setToken(null);
-    console.log("Sesión cerrada automáticamente");
+    console.log("Sesión cerrada");
   };
 
   return (
@@ -47,11 +49,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-function tokenValido(savedToken: string) {
-  throw new Error("Function not implemented.");
-}
 
-function manejarToken(savedToken: string, logout: () => Promise<void>) {
-  throw new Error("Function not implemented.");
-}
-
+export const useAuth = () => useContext(AuthContext);

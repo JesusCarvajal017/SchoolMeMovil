@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useAuth } from '../../context/AuthContext';
+import { tokenValido } from '../../util/TokenManager';
 
 const { width } = Dimensions.get('window');
 
 const InicioScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { token } = useAuth();
+
+  useEffect(() => {
+    if (token && tokenValido(token)) {
+      navigation.replace('Main');
+    }
+  }, [token]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,7 +37,10 @@ const InicioScreen = () => {
       </Text>
 
       {/* Botón */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Login')}
+      >
         <Text style={styles.buttonText}>Ingresar</Text>
       </TouchableOpacity>
     </SafeAreaView>
