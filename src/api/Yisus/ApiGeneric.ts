@@ -1,7 +1,8 @@
 // import { BOOK_END_POINT } from "../constants/endpoints";
 
-import { environment } from "../../Environment/environmet";
+
 import { Petitioner } from "../../util/fetchClass";
+import { environment } from "../constant/Enviroment";
 
 // Api generica que servira para la extencion
 export class ApiGeneric {

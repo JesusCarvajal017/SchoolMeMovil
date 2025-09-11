@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,32 +11,37 @@ const { width } = Dimensions.get('window');
 
 const InicioScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { token } = useAuth();
+  const { token, loading } = useAuth();
 
   useEffect(() => {
-    if (token && tokenValido(token)) {
-      navigation.replace('Main');
+    if (!loading && token && tokenValido(token)) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
     }
-  }, [token]);
+  }, [loading, token, navigation]);
 
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#1E1E50" />
+      </View>
+    );
+  }
+
+  // Si no hay token válido, mostramos la pantalla de bienvenida
   return (
     <SafeAreaView style={styles.container}>
-      {/* Curvas decorativas */}
       <Image source={require('../../assets/curvas.png')} style={styles.curves} />
-
-      {/* Logo en esquina superior derecha */}
       <Image source={require('../../assets/logo_colegio.png')} style={styles.logo} />
-
-      {/* Ilustración central */}
       <Image source={require('../../assets/ilustracion_inicio.png')} style={styles.illustration} />
 
-      {/* Texto de bienvenida */}
       <Text style={styles.title}>Bienvenidos a DR PHILIPS Mobil</Text>
       <Text style={styles.subtitle}>
         Lleva tu proceso educativo desde casa, y vive una experiencia más cómoda desde cualquier parte del mundo!
       </Text>
 
-      {/* Botón */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Login')}
@@ -50,6 +55,12 @@ const InicioScreen = () => {
 export default InicioScreen;
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

@@ -1,15 +1,8 @@
 export interface User {
+  id: number;
   email: string;
   password: string;
-  personId: number;
-  namePerson: string;
-  id: number;
+  personId: number; // clave para pedir la Person
+  photo: string;    // nombre de archivo en backend (e.g., "defaul.jpg")
   status: number;
 }
-// export interface UserRegister {
-//   email: string;
-//   password: string;
-//   personId: string;
-//   id: number;
-//   status: number;
-// }

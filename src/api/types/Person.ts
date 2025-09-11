@@ -1,10 +1,14 @@
+// src/api/types/Person.ts
 export interface Person {
   id: number;
+  documentTypeId: number;
   identification: number;
-  fisrtName: string;
-  secondName: string;
+  fisrtName: string;           // tal cual viene del backend (con typo)
+  secondName: string | null;
   lastName: string;
-  secondLastName: string;
-  age: number;
+  secondLastName: string | null;
+  nation: string;
+  phone: number;
+  gender: number;
   status: number;
 }

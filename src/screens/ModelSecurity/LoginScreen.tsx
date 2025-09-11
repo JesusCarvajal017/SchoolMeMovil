@@ -12,11 +12,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigation/AppNavigator';
+import type { RootStackParamList } from '../../navigation/AppNavigator'; // ✅ CORRECTO
 
 import CustomInput from '../../components/Genericos/CustomInput';
 import CustomButton from '../../components/Genericos/CustomButton';
-import { loginUser } from '../../api/services/UserService';
 import { AuthContext } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
@@ -35,8 +34,11 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     if (loading) return;
 
-    const emailValid = email.trim() !== '';
-    const passwordValid = password.trim() !== '';
+    const emailClean = email.trim().toLowerCase();
+    const passwordClean = password.trim();
+
+    const emailValid = emailClean !== '';
+    const passwordValid = passwordClean !== '';
 
     setEmailError(!emailValid);
     setPasswordError(!passwordValid);
@@ -50,22 +52,10 @@ const LoginScreen = () => {
       setLoading(true);
       setErrorMessage('');
 
-      const data = await loginUser(email, password);
-
-      // Validación estricta: si no hay token válido, mensaje claro y no guardamos nada
-      if (!data || !data.token) {
-        setErrorMessage('Las credenciales no existen o no coinciden.');
-        return;
-      }
-
-      await login(data.token);
+      await login(emailClean, passwordClean);
       navigation.replace('Main');
     } catch (err: any) {
-      if (err?.response?.status === 401 || err?.response?.status === 404) {
-        setErrorMessage('Las credenciales no existen o no coinciden.');
-      } else {
-        setErrorMessage(err.message || 'Ocurrió un error al iniciar sesión.');
-      }
+      setErrorMessage(err.message || 'Ocurrió un error al iniciar sesión.');
     } finally {
       setLoading(false);
     }
@@ -97,9 +87,7 @@ const LoginScreen = () => {
             hasError={passwordError}
           />
 
-          {errorMessage !== '' && (
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          )}
+          {errorMessage !== '' && <Text style={styles.errorText}>{errorMessage}</Text>}
 
           <TouchableOpacity style={styles.forgotContainer}>
             <Text style={styles.forgotText}>¿Olvidó su contraseña?</Text>

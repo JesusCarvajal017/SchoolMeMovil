@@ -1,52 +1,72 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export class Petitioner{
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-    _response : any;
+export class Petitioner {
+  private _response: any;
 
-     async command<T = any>( url: string, data: unknown, method: string ): Promise<T | null> {
-            try {
-                const resp = await fetch(url, {
-                    method,
-                    headers: { "Content-Type": "application/json", Accept: "application/json" },
-                    body: JSON.stringify(data),
-                });
-
-                if (!resp.ok) {
-                    const text = await resp.text();
-                    throw new Error(`HTTP ${resp.status} - ${text || resp.statusText}`);
-                }
-
-                const text = await resp.json();
-                this._response = text;
-
-            } catch (error) {
-                this._response = error;
-                throw error;
-            }
-
-            return this._response as T | null;
-        }
-
-    /** Solo recibe (GET) */
-    async querys<T = any>(url: string): Promise<T> {
-        try {
-            const resp = await fetch(url);
-
-            if (!resp.ok) {
-                const text = await resp.text();
-                throw new Error(`HTTP ${resp.status} - ${text || resp.statusText}`);
-            }
-
-            const text = await resp.json();
-
-            this._response = text;
-
-        } catch (error) {
-            this._response = error;
-            throw error;
-        }
-
-        return this._response as T;
+  private async buildHeaders(hasBody: boolean): Promise<Record<string, string>> {
+    const token = await AsyncStorage.getItem("token");
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+    };
+    if (hasBody) {
+      headers["Content-Type"] = "application/json";
     }
-}
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
+  }
 
+  async command<T = any>(url: string, data: unknown, method: HttpMethod): Promise<T> {
+    try {
+      const hasBody = method !== "GET";
+      const headers = await this.buildHeaders(true);
+
+      const resp = await fetch(url, {
+        method,
+        headers,
+        body: hasBody ? JSON.stringify(data ?? {}) : undefined,
+      });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`HTTP ${resp.status} - ${text || resp.statusText}`);
+      }
+
+      const contentType = resp.headers.get("content-type") || "";
+      const json = contentType.includes("application/json") ? await resp.json() : (undefined as unknown as T);
+      this._response = json;
+      return this._response as T;
+    } catch (error) {
+      this._response = error;
+      throw error;
+    }
+  }
+
+  /** Solo GET */
+  async querys<T = any>(url: string): Promise<T> {
+    try {
+      const headers = await this.buildHeaders(false);
+
+      const resp = await fetch(url, {
+        method: "GET",
+        headers,
+      });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`HTTP ${resp.status} - ${text || resp.statusText}`);
+      }
+
+      const contentType = resp.headers.get("content-type") || "";
+      const json = contentType.includes("application/json") ? await resp.json() : (undefined as unknown as T);
+      this._response = json;
+      return this._response as T;
+    } catch (error) {
+      this._response = error;
+      throw error;
+    }
+  }
+}
