@@ -1,6 +1,5 @@
-export interface Roles {
+export interface Group {
   id: number;
   name: string;
-  description: string;
   status: number;
 }

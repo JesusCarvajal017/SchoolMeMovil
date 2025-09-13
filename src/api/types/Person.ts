@@ -12,3 +12,6 @@ export interface Person {
   gender: number;
   status: number;
 }
+export interface UpdatePersonData {
+  phone?: number;
+}
