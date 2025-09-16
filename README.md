@@ -87,6 +87,8 @@ npm install @react-navigation/native @react-navigation/native-stack
 npm install expo expo-status-bar expo-linear-gradient
 npm install jwt-decode
 npm install @react-native-async-storage/async-storage
+npm install expo-image-picker
+npm install expo-file-system
 ```
 
 formularios avanzados:
