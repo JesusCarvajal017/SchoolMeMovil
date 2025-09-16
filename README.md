@@ -146,7 +146,7 @@ Expo generará un APK que puedes descargar e instalar manualmente en tu disposit
 ---
 
 ## 👨‍💻 Autor
-**Santiago**  
+**Santiago Chaparro Riaño**  
 📍 Ubicación: Neiva, Huila, Colombia  
 📌 Proyecto: SchoolMeMovil  
 ⚙️ Tecnologías: React Native · TypeScript · Expo · API REST · Context API · Modular Architecture  
