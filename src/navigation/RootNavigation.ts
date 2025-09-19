@@ -17,3 +17,17 @@ export function resetToInicio() {
     });
   }
 }
+
+// Nueva función específica para ir a editar perfil
+export function navigateToEditProfile() {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('EditProfile');
+  }
+}
+
+// Función para ir atrás
+export function goBack() {
+  if (navigationRef.isReady() && navigationRef.canGoBack()) {
+    navigationRef.goBack();
+  }
+}

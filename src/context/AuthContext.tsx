@@ -5,9 +5,9 @@ import { tokenValido, manejarToken } from "../util/TokenManager";
 import { login as apiLogin, AuthResponse } from "../api/services/authService";
 import { getPersonById } from "../api/services/personService";
 import { User } from "../api/types/User";
-import { Person } from "../api/types/Person";
 import { navigationRef } from "../navigation/RootNavigation";
 import { getAllUsers } from "../api/services/UserService";
+import { Person } from "../api/types";
 
 type AuthContextType = {
   token: string | null;
@@ -16,6 +16,8 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUserData: () => Promise<void>;
+  updateUserPhoto: (photo: string) => Promise<void>;
+  updateUserEmailInContext: (newEmail: string) => Promise<void>;
   loading: boolean;
   error: string | null;
 };
@@ -41,36 +43,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     if (navigationRef.isReady()) {
-      navigationRef.reset({
-        index: 0,
-        routes: [{ name: "Inicio" }],
-      });
+      navigationRef.reset({ index: 0, routes: [{ name: "Inicio" }] });
     }
   }, [logoutTimer]);
 
   const startLogoutTimer = useCallback((expiracion: string) => {
     if (logoutTimer) clearTimeout(logoutTimer);
-
     const expTime = new Date(expiracion).getTime();
     const now = Date.now();
     const msUntilLogout = expTime - now;
-
     if (msUntilLogout > 0) {
       const timer = setTimeout(() => {
-        Alert.alert(
-          "Sesión expirada",
-          "Tu sesión ha caducado.",
-          [{ text: "Entendido", onPress: () => logout() }]
-        );
+        Alert.alert("Sesión expirada", "Tu sesión ha caducado.", [
+          { text: "Entendido", onPress: () => logout() },
+        ]);
       }, msUntilLogout);
-
       setLogoutTimer(timer);
     }
   }, [logout, logoutTimer]);
 
   const fetchUserAndPerson = useCallback(async (email: string) => {
     const users = await getAllUsers();
-    const foundUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    let foundUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+
+    // Fallback: buscar por ID si no encuentra por email
+    if (!foundUser && user) {
+      foundUser = users.find((u) => u.id === user.id);
+    }
+
     if (!foundUser) throw new Error("Usuario no encontrado");
 
     setUser(foundUser);
@@ -81,14 +81,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setPerson(p);
       await AsyncStorage.setItem("person", JSON.stringify(p));
     }
-  }, []);
+  }, [user]);
 
   const refreshUserData = useCallback(async () => {
-    if (!lastEmail) return;
+    if (!lastEmail && !user) return;
     try {
-      // Solo mostrar loading si no hay datos en memoria
       if (!user || !person) setLoading(true);
-      await fetchUserAndPerson(lastEmail);
+      await fetchUserAndPerson(lastEmail || user!.email);
     } catch (err) {
       console.error("Error al refrescar datos:", err);
       setError("Error al refrescar datos");
@@ -123,30 +122,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     loadSession();
-    // Solo una vez al montar
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-
       const data: AuthResponse = await apiLogin(email, password);
       if (!data?.token) throw new Error("Token no recibido");
-
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("lastEmail", email);
       setToken(data.token);
       setLastEmail(email);
       manejarToken(data.token, logout);
-
       if ((data as any).expiracion) {
         const exp = (data as any).expiracion;
         await AsyncStorage.setItem("expiracion", exp);
         startLogoutTimer(exp);
       }
-
       await fetchUserAndPerson(email);
     } catch (err: any) {
       setError(err.message || "Error al iniciar sesión");
@@ -155,6 +148,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     }
   };
+
+  const updateUserPhoto = async (photo: string) => {
+    if (!user) return;
+    const hasTimestamp = photo.includes("?t=");
+    const finalPhoto = hasTimestamp ? photo : `${photo}?t=${Date.now()}`;
+    const updatedUser = { ...user, photo: finalPhoto };
+    setUser(updatedUser);
+    await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+  };
+
+  const updateUserEmailInContext = async (newEmail: string) => {
+  if (!user) return;
+  const updatedUser = { ...user, email: newEmail };
+  setUser(updatedUser);
+  setLastEmail(newEmail);
+  await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+  await AsyncStorage.setItem("lastEmail", newEmail);
+};
+
 
   return (
     <AuthContext.Provider
@@ -165,6 +177,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         refreshUserData,
+        updateUserPhoto,
+        updateUserEmailInContext,
         loading,
         error,
       }}

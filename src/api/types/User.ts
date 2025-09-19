@@ -1,14 +1,14 @@
 export interface User {
   id: number;
   email: string;
-  password: string;
-  personId: number; // clave para pedir la Person
-  photo: string;    // nombre de archivo en backend (e.g., "defaul.jpg")
+  password: string;   // En backend sigue existiendo, aunque no se exponga en GET
+  personId: number;   // Relación con Person
+  photo: string;      // Nombre de archivo en backend (e.g., "default.jpg")
   status: number;
 }
-// Tipos para formularios de actualización
+
 export interface UpdateUserData {
   email?: string;
   password?: string;
-  phone?: number;
 }
+  

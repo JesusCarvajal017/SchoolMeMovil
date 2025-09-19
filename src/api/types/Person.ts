@@ -1,17 +1,23 @@
-// src/api/types/Person.ts
-export interface Person {
-  id: number;
+export interface PersonData {
   documentTypeId: number;
+  acronymDocument: string;
   identification: number;
-  fisrtName: string;           // tal cual viene del backend (con typo)
+  fisrtName: string;
   secondName: string | null;
   lastName: string;
   secondLastName: string | null;
-  nation: string;
   phone: number;
   gender: number;
+  rhId: number;
+  rhName: string;
+  adress: string;
+  brithDate: string;
+  stratumStatus: number;
+  materialStatusId: number;
+  epsId: number;
+  epsName: string;
+  munisipalityId: number;
+  munisipalityName: string;
+  id: number;
   status: number;
-}
-export interface UpdatePersonData {
-  phone?: number;
 }

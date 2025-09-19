@@ -1,12 +1,13 @@
-// src/screens/Menu/MainMenuScreen.tsx
 import React, { useState, useContext, useEffect } from 'react';
 import { 
   View, 
   StyleSheet, 
   RefreshControl, 
   ScrollView,
-  Alert 
+  Alert,
+  StatusBar
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../../components/Menu/Header';
 import Carousel from '../../components/Menu/Carousel';
 import MessageBox from '../../components/Menu/MessageBox';
@@ -25,7 +26,6 @@ const MainMenuScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { logout, refreshUserData, user, person, error } = useContext(AuthContext);
 
-  // Cargar datos al montar el componente si no están disponibles
   useEffect(() => {
     if (!user || !person) {
       refreshUserData().catch(err => {
@@ -34,7 +34,6 @@ const MainMenuScreen = () => {
     }
   }, []);
 
-  // Mostrar error si existe
   useEffect(() => {
     if (error) {
       Alert.alert(
@@ -69,6 +68,21 @@ const MainMenuScreen = () => {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      
+      {/* Gradiente de fondo */}
+      <LinearGradient
+        colors={['#4C1D95', '#5B21B6', '#6366F1', '#8B5CF6']}
+        style={styles.backgroundGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+      
+      {/* Efectos decorativos de fondo */}
+      <View style={styles.decorativeCircle1} />
+      <View style={styles.decorativeCircle2} />
+      <View style={styles.decorativeCircle3} />
+      
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -76,8 +90,9 @@ const MainMenuScreen = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#5DA3FA"
-            colors={['#5DA3FA']}
+            tintColor="#FFFFFF"
+            colors={['#FFFFFF']}
+            progressBackgroundColor="#FFFFFF"
           />
         }
         showsVerticalScrollIndicator={false}
@@ -104,18 +119,53 @@ const MainMenuScreen = () => {
   );
 };
 
-export default MainMenuScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#17144B',
+    backgroundColor: '#4C1D95',
+  },
+  backgroundGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  decorativeCircle1: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    top: -50,
+    right: -50,
+  },
+  decorativeCircle2: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    bottom: 100,
+    left: -40,
+  },
+  decorativeCircle3: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    top: 200,
+    left: 30,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 40,
-    paddingBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
+    flexGrow: 1,
   },
 });
+
+export default MainMenuScreen;

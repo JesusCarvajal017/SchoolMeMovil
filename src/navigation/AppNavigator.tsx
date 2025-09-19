@@ -11,6 +11,9 @@ import AgendaScreen from '../screens/AgendaScreen';
 import ReportesScreen from '../screens/ReportesScreen';
 import PadresScreen from '../screens/PadresScreen';
 
+// Pantalla de editar perfil
+import EditProfileScreen from '../screens/EditProfileScreen';
+
 export type RootStackParamList = {
   Inicio: undefined;
   Login: undefined;
@@ -18,6 +21,7 @@ export type RootStackParamList = {
   Agenda: undefined;
   Reportes: undefined;
   Padres: undefined;
+  EditProfile: undefined; // Nueva ruta agregada
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,6 +35,15 @@ export default function AppNavigator() {
       <Stack.Screen name="Agenda" component={AgendaScreen} />
       <Stack.Screen name="Reportes" component={ReportesScreen} />
       <Stack.Screen name="Padres" component={PadresScreen} />
+      {/* Nueva pantalla de editar perfil */}
+      <Stack.Screen 
+        name="EditProfile" 
+        component={EditProfileScreen}
+        options={{
+          headerShown: false, // Usamos header personalizado
+          presentation: 'card', // Animación suave
+        }}
+      />
     </Stack.Navigator>
   );
 }

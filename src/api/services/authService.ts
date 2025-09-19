@@ -1,8 +1,9 @@
 // src/api/services/authService.ts
 import { Petitioner } from "../../util/fetchClass";
 import { environment } from "../constant/Enviroment";
+import { Person } from "../types";
 import { User } from "../types/User";
-import { Person } from "../types/Person";
+
 
 const http = new Petitioner();
 const baseUrl = environment.urlApi;

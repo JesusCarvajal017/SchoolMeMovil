@@ -1,5 +1,4 @@
-// src/components/Menu/Header.tsx
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../../context/AuthContext';
 import { environment } from '../../api/constant/Enviroment';
+import ChangePhotoModal from '../../modals/ChangePhotoModal';
 
 type Props = {
   onMenuPress: () => void;
@@ -23,6 +23,7 @@ type Props = {
 const Header = ({ onMenuPress, onHelpPress }: Props) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { user, person, loading } = useContext(AuthContext);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -32,51 +33,49 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
     }).start();
   }, []);
 
-  // Construir el nombre completo
   const getFullName = () => {
     if (loading) return 'Cargando...';
     if (!person) return 'Usuario';
-    
     const nameParts = [
       person.fisrtName,
       person.secondName,
       person.lastName,
       person.secondLastName,
-    ].filter(Boolean); // Filtra valores undefined/null/empty
-    
+    ].filter(Boolean);
     return nameParts.length > 0 ? nameParts.join(' ') : 'Usuario';
   };
 
-  // Obtener la imagen del perfil
   const getProfileImage = () => {
-    if (user?.photo) {
-      return { uri: `${environment.urlApi}/uploads/${user.photo}` };
+  const photo = user?.photo?.trim();
+  if (!photo) {
+    const initial = (person?.fisrtName?.charAt(0) || 'U').toUpperCase();
+    return {
+      uri: `https://via.placeholder.com/120/6366f1/ffffff?text=${initial}`
+    };
+  }
+
+  // Si es una URL completa
+  if (photo.startsWith('http')) {
+    let url = photo;
+    if (url.includes('localhost')) {
+      url = url.replace('localhost', environment.uri);
     }
-    return require('../../assets/default.jpg');
-  };
+    return { uri: url };
+  }
 
-  // Obtener el email de manera segura
-  const getEmail = () => {
-    if (loading) return 'Cargando...';
-    return user?.email || 'No disponible';
-  };
+  // Si es solo el nombre del archivo
+  return { uri: `http://${environment.uri}:5250/usuarios/${photo}` };
+};
 
-  // Obtener la identificación de manera segura
-  const getIdentification = () => {
-    if (loading) return 'Cargando...';
-    return person?.identification || 'No disponible';
-  };
+
+
+  const getEmail = () => (loading ? 'Cargando...' : user?.email || 'No disponible');
+  const getIdentification = () => (loading ? 'Cargando...' : person?.identification || 'No disponible');
 
   return (
     <>
-      <StatusBar 
-        translucent 
-        backgroundColor="#ffffff" 
-        barStyle="dark-content" 
-        animated 
-      />
+      <StatusBar translucent backgroundColor="#ffffff" barStyle="dark-content" animated />
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-        {/* Fila superior */}
         <View style={styles.topRow}>
           <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
             <Ionicons name="menu" size={28} color="#000" />
@@ -86,7 +85,8 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
             <TouchableOpacity onPress={onHelpPress} style={styles.helpButton}>
               <Ionicons name="help-circle-outline" size={24} color="#000" />
             </TouchableOpacity>
-            <View style={styles.profileWrapper}>
+
+            <TouchableOpacity onPress={() => setShowModal(true)} style={styles.profileWrapper}>
               {loading ? (
                 <View style={styles.loadingProfile}>
                   <ActivityIndicator size="small" color="#5DA3FA" />
@@ -94,11 +94,10 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
               ) : (
                 <Image source={getProfileImage()} style={styles.profileImage} />
               )}
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Bienvenida */}
         <View style={styles.welcomeSection}>
           <Text style={styles.welcome}>BIENVENIDO</Text>
           <Text style={styles.subtitle} numberOfLines={2} ellipsizeMode="tail">
@@ -106,7 +105,6 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
           </Text>
         </View>
 
-        {/* Información del usuario */}
         <View style={styles.infoContainer}>
           <View style={styles.infoBox}>
             <Ionicons name="mail-outline" size={16} color="#1E1E50" />
@@ -114,7 +112,7 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
               {getEmail()}
             </Text>
           </View>
-          
+
           <View style={styles.infoBox}>
             <Ionicons name="card-outline" size={16} color="#1E1E50" />
             <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">
@@ -123,7 +121,6 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
           </View>
         </View>
 
-        {/* Indicador de carga general */}
         {loading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="small" color="#5DA3FA" />
@@ -131,6 +128,8 @@ const Header = ({ onMenuPress, onHelpPress }: Props) => {
           </View>
         )}
       </Animated.View>
+
+      <ChangePhotoModal visible={showModal} onClose={() => setShowModal(false)} />
     </>
   );
 };
@@ -154,22 +153,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  menuButton: {
-    padding: 6,
-  },
-  helpButton: {
-    padding: 6,
-  },
-  rightIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
+  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  menuButton: { padding: 6 },
+  helpButton: { padding: 6 },
+  rightIcons: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   profileWrapper: {
     width: 40,
     height: 40,
@@ -179,36 +166,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#5DA3FA',
   },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  loadingProfile: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  welcomeSection: {
-    marginTop: 20,
-    alignItems: 'flex-start',
-    paddingHorizontal: 4,
-  },
-  welcome: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1E1E50',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#1E1E50',
-    fontWeight: '500',
-  },
-  infoContainer: {
-    marginTop: 20,
-    gap: 12,
-  },
+  profileImage: { width: '100%', height: '100%' },
+  loadingProfile: { width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' },
+  welcomeSection: { marginTop: 20, alignItems: 'flex-start', paddingHorizontal: 4 },
+  welcome: { fontSize: 24, fontWeight: 'bold', color: '#1E1E50', marginBottom: 4 },
+  subtitle: { fontSize: 16, color: '#1E1E50', fontWeight: '500' },
+  infoContainer: { marginTop: 20, gap: 12 },
   infoBox: {
     backgroundColor: '#F5F5F5',
     paddingVertical: 12,
@@ -222,22 +185,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  infoText: {
-    fontSize: 14,
-    color: '#1E1E50',
-    fontWeight: '500',
-    flex: 1,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    bottom: 10,
-    right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  loadingText: {
-    fontSize: 12,
-    color: '#5DA3FA',
-  },
+  infoText: { fontSize: 14, color: '#1E1E50', fontWeight: '500', flex: 1 },
+  loadingOverlay: { position: 'absolute', bottom: 10, right: 20, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  loadingText: { fontSize: 12, color: '#5DA3FA' },
 });
