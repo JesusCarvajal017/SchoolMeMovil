@@ -76,8 +76,8 @@ const AjustesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#4C1D95" />
-      <LinearGradient colors={['#4C1D95', '#5B21B6', '#6366F1']} style={styles.header}>
+      <StatusBar barStyle="light-content" backgroundColor="#1E1E50" />
+      <LinearGradient colors={['#1E1E50', '#5B21B6', '#6366F1']} style={styles.header}>
         <SafeAreaView>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>ajustes</Text>

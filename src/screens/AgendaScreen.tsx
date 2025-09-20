@@ -150,7 +150,7 @@ const AgendaScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <StatusBar barStyle="light-content" backgroundColor="#4C1D95" />
+        <StatusBar barStyle="light-content" backgroundColor="#1E1E50" />
         <LinearGradient
           colors={['#4C1D95', '#5B21B6', '#6366F1']}
           style={styles.loadingGradient}
@@ -198,7 +198,7 @@ const AgendaScreen = () => {
       
       {/* Header con gradiente */}
       <LinearGradient
-        colors={['#4C1D95', '#5B21B6', '#6366F1']}
+        colors={['#1E1E50', '#5B21B6', '#6366F1']}
         style={styles.header}
       >
         <SafeAreaView>

@@ -17,6 +17,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { AuthContext } from '../context/AuthContext';
 import { environment } from '../api/constant/Enviroment';
+import { getRolesByUserId } from '../api/services/rolUserService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -75,43 +76,20 @@ const SideMenu = ({ visible, onClose, navigation }: Props) => {
   }, [visible]);
 
   const fetchUserRoles = async () => {
-    if (!user?.id) return;
-    
-    try {
-      setLoading(true);
-      const response = await fetch(`${environment.urlApi}/api/UserRol/RolesUsuario/${user.id}`);
-      
-      // Verificar si la respuesta es válida
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const text = await response.text();
-      
-      // Verificar si la respuesta no está vacía
-      if (!text) {
-        console.warn('Empty response from roles API');
-        setUserRoles([]);
-        return;
-      }
-      
-      const data = JSON.parse(text);
-      setUserRoles(data);
-    } catch (error) {
-      console.error('Error fetching user roles:', error);
-      // En caso de error, establecer roles predeterminados
-      setUserRoles([{
-        userId: user.id,
-        nameUser: getFullName.name || '',
-        rolId: 4, // Asumimos rol de Acudiente por defecto
-        rolName: 'Acudiente',
-        id: 1,
-        status: 1
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!user?.id) return;
+
+  try {
+    setLoading(true);
+    const roles = await getRolesByUserId(user.id);
+    setUserRoles(roles);
+  } catch (error) {
+    console.error('Error al cargar roles:', error);
+    setUserRoles([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleNavigate = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen);

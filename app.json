@@ -11,15 +11,17 @@
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
-      "plugins": ["expo-image-picker"]
+      "plugins": [
+        "expo-image-picker"
+      ]
     },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-      "NSAppTransportSecurity": {
-      "NSAllowsArbitraryLoads": true
-    }
-  }
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +29,8 @@
         "backgroundColor": "#ffffff",
         "usesCleartextTraffic": true
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.ModelSecurityMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

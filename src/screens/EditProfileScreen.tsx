@@ -90,7 +90,7 @@ const EditProfileScreen = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color="#1E1E50" />
           <Text style={styles.loadingText}>Cargando...</Text>
         </View>
       </SafeAreaView>
